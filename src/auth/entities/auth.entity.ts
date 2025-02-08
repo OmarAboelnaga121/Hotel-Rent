@@ -23,15 +23,15 @@ export class Auth {
   @Field(() => String, { description: "Role's User" })
   role: string;
 
-  @Field(() => String, { description: "Array of user's Booking" })
-  bookings?: string;
+  // @Field(() => String, { description: "Array of user's Booking" })
+  // bookings?: string;
 
-  @Field(() => String, { description: "Array of user's Booking" })
-  image?: string;
+  // @Field(() => String, { description: "Array of user's Booking" })
+  // image?: string;
 
-  @Field(() => Date, { description: "The date of the created user" })
-  createdAt: Date;
+  // @Field(() => Date, { description: "The date of the created user" })
+  // createdAt?: Date;
 
-  @Field(() => Date, { description: 'The last date when user updated user' })
-  updatedAt: Date;
+  // @Field(() => Date, { description: 'The last date when user updated user' })
+  // updatedAt?: Date;
 }
