@@ -6,13 +6,13 @@ export class Auth {
   id: number;
 
   @Field(() => String, { description: 'First Name' })
-  first_name: string;
+  firstName: string;
   
   @Field(() => String, { description: 'Last Name' })
-  last_name: string;
+  lastName: string;
 
   @Field(() => String, { description: 'Phone Number' })
-  phone_number: string;
+  phoneNumber: string;
 
   @Field(() => String, { description: 'Email' })
   email: string;
