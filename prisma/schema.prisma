@@ -12,3 +12,119 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  CUSTOMERSUPPORT
+  SELLER
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  phoneNumber String    @unique
+  email       String    @unique
+  password    String
+  role        UserRole
+  bookings    Booking[]
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  Payment Payment[]
+
+  Review Review[]
+
+}
+
+model Hotel {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  location    String
+  address     String
+  phone       String
+  amenities   String
+  images      String
+  rooms       Room[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  Review Review[]
+}
+
+model Room {
+  id            Int       @id @default(autoincrement())
+  hotelId       Int
+  hotel         Hotel     @relation(fields: [hotelId], references: [id])
+  type          String
+  pricePerNight Int
+  amenities     String
+  images        String
+  isAvailable   Boolean
+  maxGuests     Int
+  bookings      Booking[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  Review Review[]
+}
+
+model Booking {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  roomId      Int
+  room        Room      @relation(fields: [roomId], references: [id])
+  checkInDate DateTime
+  checkOutDate DateTime
+  totalPrice  Int
+  status      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  Payment Payment[]
+}
+
+model Payment {
+  id            Int       @id @default(autoincrement())
+  bookingId     Int
+  booking       Booking   @relation(fields: [bookingId], references: [id])
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  amount        Int
+  paymentMethod String
+  status        String
+  transactionId Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Review {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  hotelId   Int
+  hotel     Hotel     @relation(fields: [hotelId], references: [id])
+  roomId    Int
+  room      Room      @relation(fields: [roomId], references: [id])
+  rating    Int
+  comment   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  resourceId  Int
+  from        String
+  message     String
+  type        String
+  isRead      Boolean
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
