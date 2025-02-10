@@ -3,7 +3,8 @@ import { AuthModule } from './auth/auth.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { CommonModule } from './common/common.module';
+import { ImageUploadModule } from './image-upload/image-upload.module';
+// import GraphQLUpload from 'graphql-upload';
 
 @Module({
   imports: [
@@ -12,8 +13,7 @@ import { CommonModule } from './common/common.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    CommonModule,
-    
+    ImageUploadModule,
   ],
   controllers: [],
   providers: [],

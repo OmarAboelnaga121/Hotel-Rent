@@ -1,14 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
-import { CommonService } from 'src/common/common.service';
 import { UserRole } from '@prisma/client';
 import * as argon from 'argon2';
 
 @Injectable()
 export class AuthService {
-  constructor(private primsaService : PrismaService, private commonService : CommonService) {}
+  constructor(private primsaService : PrismaService) {}
+  
 
+  // TODO: Register User
+  // !file : FileUpload
   async registration(userDto: RegisterDto) {
     const checkUser = await this.primsaService.user.findUnique({
       where: {
