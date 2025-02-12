@@ -11,5 +11,5 @@ export class LoginDto {
       @Field(() => String, { description: "User's Password" })
       @IsString()
       @IsNotEmpty()
-      hashedPassword: string;
+      password: string;
 }

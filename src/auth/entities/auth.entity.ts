@@ -17,11 +17,14 @@ export class Auth {
   @Field(() => String, { description: 'Email' })
   email: string;
 
-  @Field(() => String, { description: "User's Password" })
-  hashedPassword: string;
+  // @Field(() => String, { description: "User's Password" })
+  // hashedPassword: string;
 
   @Field(() => String, { description: "Role's User" })
   role: string;
+
+  @Field(() => String, { description: "access_token" })
+  access_token: string;
 
   // @Field(() => String, { description: "Array of user's Booking" })
   // bookings?: string;

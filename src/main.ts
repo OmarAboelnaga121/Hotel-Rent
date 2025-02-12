@@ -1,10 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import { graphqlUploadExpress } from 'graphql-upload';
+import * as dotenv from 'dotenv';
+
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+} else {
+  dotenv.config({ path: '.env.development' });
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.use(graphqlUploadExpress({ maxFileSize: 10 * 1024 * 1024, maxFiles: 1 }));
 
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -30,7 +30,7 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  // TODOS: Test Of the auth module
+  // TODO: Test Of the auth module
   describe('Auth Module', () => {
     // Test User Register with statsus 200
     it('should register a user with statsus 200', async () => {
@@ -38,8 +38,8 @@ describe('AppController (e2e)', () => {
         .post('/graphql')
         .withJson({
           query: `
-            mutation {
-              createAuth(userDto: {
+            mutation Register{
+              register(userDto: {
                 firstName: "Omar"
                 lastName: "WOW"
                 phoneNumber: "01205812263"
@@ -48,10 +48,6 @@ describe('AppController (e2e)', () => {
                 role: "ADMIN"
               }) {
                 firstName
-                lastName
-                phoneNumber
-                email
-                role
               }
             }
           `
@@ -59,38 +55,52 @@ describe('AppController (e2e)', () => {
         .expectStatus(200)
         .expectBody({
           data: {
-            createAuth: {
+            register: {
               firstName: "Omar",
-              lastName: "WOW",
-              phoneNumber: "01205812263",
-              email: "omaraboelnaga121@gmail.com",
-              role: "ADMIN"
             }
           }
         });
       });
 
-      // Test User Register with statsus 400
-      it("shouldn't register user due to it is already on db", async () => {
+    // Test User Register with statsus 400
+    it("shouldn't register user due to it is already on db", async () => {
+      await pactum.spec()
+        .post('/graphql')
+        .withJson({
+          query: `
+            mutation Register{
+              register(userDto: {
+                firstName: "Omar"
+                lastName: "WOW"
+                phoneNumber: "01205812263"
+                email: "omaraboelnaga121@gmail.com"
+                password: "StrongP@ssword1"
+                role: "ADMIN"
+              }) {
+                firstName
+              }
+            }
+          `
+        })
+        .expectBodyContains('"statusCode": 400')
+      });
+      // TODO:Login User with status 200
+      it('should login a user with status 200', async () => {
         await pactum.spec()
           .post('/graphql')
           .withJson({
             query: `
-              mutation {
-                createAuth(userDto: {
-                  firstName: "Omar"
-                  lastName: "WOW"
-                  phoneNumber: "01205812263"
+              mutation Login{
+                login(loginDto: {
                   email: "omaraboelnaga121@gmail.com"
                   password: "StrongP@ssword1"
-                  role: "ADMIN"
-                }) {
-                  firstName
+                }){
+                  access_token
                 }
               }
             `
           })
-          .expectStatus(400)
-        });
-  });
+          .expectStatus(200)
+      })
+    });
   });

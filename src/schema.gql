@@ -18,11 +18,11 @@ type Auth {
   """Email"""
   email: String!
 
-  """User's Password"""
-  hashedPassword: String!
-
   """Role's User"""
   role: String!
+
+  """access_token"""
+  access_token: String!
 }
 
 type Query {
@@ -30,7 +30,8 @@ type Query {
 }
 
 type Mutation {
-  createAuth(userDto: RegisterDto!): Auth!
+  register(userDto: RegisterDto!): Auth!
+  login(loginDto: LoginDto!): Auth!
 }
 
 input RegisterDto {
@@ -51,4 +52,12 @@ input RegisterDto {
 
   """Role's User"""
   role: String!
+}
+
+input LoginDto {
+  """Email"""
+  email: String!
+
+  """User's Password"""
+  password: String!
 }
