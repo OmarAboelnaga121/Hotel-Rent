@@ -4,7 +4,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ImageUploadModule } from './image-upload/image-upload.module';
-// import GraphQLUpload from 'graphql-upload';
+import { ConfigModule } from '@nestjs/config';
+
 
 @Module({
   imports: [
@@ -14,6 +15,10 @@ import { ImageUploadModule } from './image-upload/image-upload.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     ImageUploadModule,
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env.development',
+    }),
+
   ],
   controllers: [],
   providers: [],
