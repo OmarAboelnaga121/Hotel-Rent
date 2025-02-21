@@ -105,4 +105,7 @@ export class AuthService {
   async token(payload: any) {
     return this.jwtService.sign(payload);
   }
+
+
+
 }

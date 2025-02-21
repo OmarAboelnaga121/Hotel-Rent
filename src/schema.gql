@@ -25,13 +25,52 @@ type Auth {
   access_token: String!
 }
 
+type User {
+  """Id Of User"""
+  id: Float!
+
+  """First Name"""
+  firstName: String!
+
+  """Last Name"""
+  lastName: String!
+
+  """Phone Number"""
+  phoneNumber: String!
+
+  """Email"""
+  email: String!
+
+  """Role's User"""
+  role: String!
+
+  """Array of user's Booking"""
+  bookings: String!
+
+  """Array of user's Booking"""
+  image: String!
+
+  """The date of the created user"""
+  createdAt: DateTime!
+
+  """The last date when user updated user"""
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   hello: String!
+  getUserProfile: User!
 }
 
 type Mutation {
   register(userDto: RegisterDto!): Auth!
   login(loginDto: LoginDto!): Auth!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 input RegisterDto {
@@ -60,4 +99,8 @@ input LoginDto {
 
   """User's Password"""
   password: String!
+}
+
+input UpdateUserInput {
+  id: Int!
 }
