@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
 export class User {
@@ -17,18 +17,18 @@ export class User {
   @Field(() => String, { description: 'Email' })
   email: string;
 
-  @Field(() => String, { description: "Role's User" })
+  @Field(() => String, { description: "User's Role" })
   role: string;
 
-  @Field(() => [String], { description: "Array of user's Booking" })
+  @Field(() => [String], { description: "User's Bookings", nullable: true })
   bookings?: string[];
 
-  @Field(() => String, { description: "Array of user's Booking" })
+  @Field(() => String, { description: "User's Profile Image", nullable: true })
   image?: string;
 
-  @Field(() => Date, { description: "The date of the created user" })
-  createdAt?: Date;
+  @Field(() => Date, { description: "The date when the user was created" })
+  createdAt: Date;
 
-  @Field(() => Date, { description: 'The last date when user updated user' })
-  updatedAt?: Date;
+  @Field(() => Date, { description: "The date when the user was last updated" })
+  updatedAt: Date;
 }

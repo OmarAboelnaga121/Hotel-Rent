@@ -49,15 +49,19 @@ export class AuthService {
         firstName: true,
         lastName: true,
         phoneNumber: true,
-        image: true,
-        role: true
+        role: true,
+        image: true
       }
     });
+
+    // Create Token
+    const payload = { sub: newUser.id, email: newUser.email };
+    const token = this.jwtService.sign(payload);
 
     // Return User Data With access token
     return {
       ...newUser,
-      access_token: this.jwtService.sign({ sub: newUser.id, email: newUser.email })
+      access_token: token
     };
   }
 
@@ -94,10 +98,10 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
 
     // Return User with Token
-    const { password, ...result } = user;
+    const { password, ...userWithoutPassword } = user;
     return {
-      ...result,
-      access_token: token,
+      ...userWithoutPassword,
+      access_token: token
     };
   }
 
@@ -105,7 +109,4 @@ export class AuthService {
   async token(payload: any) {
     return this.jwtService.sign(payload);
   }
-
-
-
 }

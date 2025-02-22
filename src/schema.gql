@@ -41,19 +41,19 @@ type User {
   """Email"""
   email: String!
 
-  """Role's User"""
+  """User's Role"""
   role: String!
 
-  """Array of user's Booking"""
-  bookings: [String!]!
+  """User's Bookings"""
+  bookings: [String!]
 
-  """Array of user's Booking"""
-  image: String!
+  """User's Profile Image"""
+  image: String
 
-  """The date of the created user"""
+  """The date when the user was created"""
   createdAt: DateTime!
 
-  """The last date when user updated user"""
+  """The date when the user was last updated"""
   updatedAt: DateTime!
 }
 
@@ -70,6 +70,7 @@ type Query {
 type Mutation {
   register(userDto: RegisterDto!): Auth!
   login(loginDto: LoginDto!): Auth!
+  updateUserProfile(updateUserInput: UpdateUserDto!): User!
 }
 
 input RegisterDto {
@@ -98,4 +99,18 @@ input LoginDto {
 
   """User's Password"""
   password: String!
+}
+
+input UpdateUserDto {
+  """First Name"""
+  firstName: String
+
+  """Last Name"""
+  lastName: String
+
+  """Phone Number"""
+  phoneNumber: String
+
+  """Email"""
+  email: String
 }

@@ -4,10 +4,10 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import * as pactum from 'pactum';
-import { PrismaService } from './../src/prisma/prisma.service';
-import * as path from 'path';
+import { PrismaService } from '../src/prisma/prisma.service';
+import path from 'path';
 import * as fs from 'fs';
 
 describe('AppController (e2e)', () => {
@@ -24,10 +24,11 @@ describe('AppController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true,
     }));
+
     await app.init();
     await app.listen(3453);
 
-    pactum.request.setBaseUrl(`http://localhost:3453`);
+    pactum.request.setBaseUrl('http://localhost:3453');
 
     prisma = app.get(PrismaService);
     await prisma.cleanDb();
@@ -37,28 +38,117 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  // TODO: Test Of the auth module
   describe('Auth Module', () => {
+    // Test User Register with status 201
+    it('should register a user with status 201', async () => {
+      return pactum.spec()
+        .post('/graphql')
+        .withGraphQLQuery(`
+          mutation Register($userDto: RegisterDto!) {
+            register(userDto: $userDto) {
+              id
+              email
+              firstName
+              lastName
+              phoneNumber
+            }
+          }
+        `)
+        .withGraphQLVariables({
+          userDto: {
+            firstName: "Omar",
+            lastName: "WOW",
+            email: "omar@gmail.com",
+            password: "123456789",
+            phoneNumber: "01234567891"
+          }
+        })
+        .expectStatus(201);
+    });
+
+    // Test Invalid Registration with status 400
+    it('should fail registration with invalid data (status 400)', async () => {
+      return pactum.spec()
+        .post('/graphql')
+        .withGraphQLQuery(`
+          mutation Register($userDto: RegisterDto!) {
+            register(userDto: $userDto) {
+              id
+            }
+          }
+        `)
+        .withGraphQLVariables({
+          userDto: {
+            firstName: "",
+            lastName: "",
+            email: "invalid-email",
+            password: "123",
+            phoneNumber: "invalid"
+          }
+        })
+        .expectStatus(400);
+    });
+
+    // Test Unauthorized Access with status 401
+    it('should return 401 for unauthorized access', async () => {
+      return pactum.spec()
+        .post('/graphql')
+        .withGraphQLQuery(`
+          query {
+            me {
+              id
+              email
+            }
+          }
+        `)
+        .expectStatus(401);
+    });
+
+    // Test Successful Login with status 200
+    it('should login successfully with status 200', async () => {
+      return pactum.spec()
+        .post('/graphql')
+        .withGraphQLQuery(`
+          mutation Login($loginDto: LoginDto!) {
+            login(loginDto: $loginDto) {
+              access_token
+              user {
+                id
+                email
+              }
+            }
+          }
+        `)
+        .withGraphQLVariables({
+          loginDto: {
+            email: "omar@gmail.com",
+            password: "123456789"
+          }
+        })
+        .expectStatus(200);
+    });
+
     // Test User Register with status 200
     it('should register a user with status 200', async () => {
       const response = await pactum.spec()
         .post('/graphql')
-        .withJson({
-          query: `
-            mutation Register{
-              register(userDto: {
-                firstName: "Omar"
-                lastName: "WOW"
-                phoneNumber: "01205812263"
-                email: "omaraboelnaga121@gmail.com"
-                password: "StrongP@ssword1"
-                role: "ADMIN"
-              }) {
-                id
-                firstName
-              }
+        .withGraphQLQuery(`
+          mutation Register($userDto: RegisterDto!) {
+            register(userDto: $userDto) {
+              id
+              firstName
             }
-          `
+          }
+        `)
+        .withGraphQLVariables({
+          userDto: {
+            firstName: "Omar",
+            lastName: "WOW",
+            phoneNumber: "01205812263",
+            email: "omaraboelnaga121@gmail.com",
+            password: "StrongP@ssword1",
+            role: "ADMIN"
+          }
         })
         .expectStatus(200)
         .returns('data.register');
@@ -71,21 +161,22 @@ describe('AppController (e2e)', () => {
     it("shouldn't register user due to it is already on db", async () => {
       await pactum.spec()
         .post('/graphql')
-        .withJson({
-          query: `
-            mutation Register{
-              register(userDto: {
-                firstName: "Omar"
-                lastName: "WOW"
-                phoneNumber: "01205812263"
-                email: "omaraboelnaga121@gmail.com"
-                password: "StrongP@ssword1"
-                role: "ADMIN"
-              }) {
-                firstName
-              }
+        .withGraphQLQuery(`
+          mutation Register($userDto: RegisterDto!) {
+            register(userDto: $userDto) {
+              firstName
             }
-          `
+          }
+        `)
+        .withGraphQLVariables({
+          userDto: {
+            firstName: "Omar",
+            lastName: "WOW",
+            phoneNumber: "01205812263",
+            email: "omaraboelnaga121@gmail.com",
+            password: "StrongP@ssword1",
+            role: "ADMIN"
+          }
         })
         .expectStatus(200)
         .expectJsonLike({
@@ -103,17 +194,18 @@ describe('AppController (e2e)', () => {
     it('should login a user with status 200', async () => {
       await pactum.spec()
         .post('/graphql')
-        .withJson({
-          query: `
-            mutation Login{
-              login(loginDto: {
-                email: "omaraboelnaga121@gmail.com"
-                password: "StrongP@ssword1"
-              }){
-                access_token
-              }
+        .withGraphQLQuery(`
+          mutation Login($loginDto: LoginDto!) {
+            login(loginDto: $loginDto) {
+              access_token
             }
-          `
+          }
+        `)
+        .withGraphQLVariables({
+          loginDto: {
+            email: "omaraboelnaga121@gmail.com",
+            password: "StrongP@ssword1"
+          }
         })
         .expectStatus(200);
     });
@@ -122,17 +214,18 @@ describe('AppController (e2e)', () => {
     it('should not login a user with status 401', async () => {
       await pactum.spec()
         .post('/graphql')
-        .withJson({
-          query: `
-            mutation Login{
-              login(loginDto: {
-                email: "anymail@gmail.com"
-                password: "StrongP@ssword1"
-              }){
-                access_token
-              }
+        .withGraphQLQuery(`
+          mutation Login($loginDto: LoginDto!) {
+            login(loginDto: $loginDto) {
+              access_token
             }
-          `
+          }
+        `)
+        .withGraphQLVariables({
+          loginDto: {
+            email: "anymail@gmail.com",
+            password: "StrongP@ssword1"
+          }
         })
         .expectStatus(200)
         .expectJsonLike({
@@ -150,17 +243,18 @@ describe('AppController (e2e)', () => {
     it('should not login a user with status 401 due to invalid password', async () => {
       const res = await pactum.spec()
         .post('/graphql')
-        .withJson({
-          query: `
-            mutation Login{
-              login(loginDto: {
-                email: "omaraboelnaga121@gmail.com"
-                password: "anyPass"
-              }){
-                access_token
-              }
+        .withGraphQLQuery(`
+          mutation Login($loginDto: LoginDto!) {
+            login(loginDto: $loginDto) {
+              access_token
             }
-          `
+          }
+        `)
+        .withGraphQLVariables({
+          loginDto: {
+            email: "omaraboelnaga121@gmail.com",
+            password: "anyPass"
+          }
         })
         .expectStatus(200)
         .expectJsonLike({
