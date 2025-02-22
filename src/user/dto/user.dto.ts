@@ -23,8 +23,8 @@ export class UserDto {
   @Field(() => String, { description: "Role's User" })
   role: string;
 
-  @Field(() => String, { description: "Array of user's Booking" })
-  bookings?: string;
+  @Field(() => [String], { description: "Array of user's Booking" })
+  bookings?: string[];
 
   @Field(() => String, { description: "Array of user's Booking" })
   image?: string;

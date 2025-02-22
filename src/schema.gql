@@ -45,7 +45,7 @@ type User {
   role: String!
 
   """Array of user's Booking"""
-  bookings: String!
+  bookings: [String!]!
 
   """Array of user's Booking"""
   image: String!
@@ -70,7 +70,6 @@ type Query {
 type Mutation {
   register(userDto: RegisterDto!): Auth!
   login(loginDto: LoginDto!): Auth!
-  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 input RegisterDto {
@@ -99,8 +98,4 @@ input LoginDto {
 
   """User's Password"""
   password: String!
-}
-
-input UpdateUserInput {
-  id: Int!
 }

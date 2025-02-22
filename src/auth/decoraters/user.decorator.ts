@@ -9,8 +9,5 @@ export const UserProfile = createParamDecorator((data: unknown, ctx: ExecutionCo
     throw new Error('User not found in request');
   }
 
-  console.log('User', request.user);
-
-
-  return request.user; // Return the authenticated user
+  return request.user;
 });
