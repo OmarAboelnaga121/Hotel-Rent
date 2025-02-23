@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -9,6 +10,7 @@ export class UserService {
       private prismaService: PrismaService,
     ) {}
     
+    // TODO: Update Users's Data Using The Token 
     async updateUserProfile(userId: number, updateUserDto: UpdateUserDto) {
         // Check if user exists and matches the token user ID
         const existingUser = await this.prismaService.user.findUnique({
@@ -55,5 +57,30 @@ export class UserService {
         });
 
         return updatedUser;
+    }
+
+    // TODO: Get All Users For Admins And Customer Support
+    async getAllUsers(user : UserDto) {
+        if(user.role !== UserRole.ADMIN && user.role !== UserRole.CUSTOMERSUPPORT) {
+            throw new BadRequestException('Only admins and customer support can get all users');
+        }
+
+        const users = await this.prismaService.user.findMany({
+            select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                phoneNumber: true,
+                image: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        })
+
+        console.log(users)
+
+        return users;
     }
 }
