@@ -14,6 +14,7 @@ describe('AppController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let userId: number;
+  let ACCESS_TOKEN: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -101,7 +102,7 @@ describe('AppController (e2e)', () => {
 
     // TODO: Login User with status 200
     it('should login a user with status 200', async () => {
-      await pactum.spec()
+      const res = await pactum.spec()
         .post('/graphql')
         .withJson({
           query: `
@@ -115,6 +116,14 @@ describe('AppController (e2e)', () => {
             }
           `
         })
+        .expectJsonLike({
+          data: {
+            login: {
+              access_token: expect.any(String)
+            }
+          }
+        })
+        .stores('ACCESS_TOKEN', 'data.login.access_token')
         .expectStatus(200);
     });
 
@@ -199,23 +208,31 @@ describe('AppController (e2e)', () => {
     });
 
     // Test getting all users (admin only)
-    // it('should get all users as admin', async () => {
-    //   await pactum.spec()
-    //     .post('/graphql')
-    //     .withGraphQLQuery(`
-    //       query GetUsersForAdmins{
-    //         getUsersForAdmins {
-    //           id
-    //           email
-    //           firstName
-    //           lastName
-    //           phoneNumber
-    //           role
-    //         }
-    //       }
-    //     `)
-    //     .expectStatus(200);
-    // });
+    it('should get all users as admin', async () => {
+      await pactum.spec()
+        .post('/graphql')
+        .withHeaders({
+          'Authorization': `Bearer $S{ACCESS_TOKEN}`
+        })
+        .withGraphQLQuery(`
+          query GetUsersForAdmins{
+            getUsersForAdmins {
+              id
+              email
+              firstName
+              lastName
+              phoneNumber
+              role
+            }
+          }
+        `)
+        .expectJsonLike({
+          "data": {
+            "getUsersForAdmins": {}
+
+          }
+        }); 
+    });
 
     // it('should fail to get all users as non-admin', async () => {
     //   await pactum.spec()
