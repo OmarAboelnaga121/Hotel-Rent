@@ -62,10 +62,62 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type RoomDto {
+  name: String!
+  capacity: Float!
+}
+
+type ReviewDto {
+  id: Int!
+  comment: String!
+  rating: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Hotel {
+  """Id of the Hotel"""
+  id: Int!
+
+  """Name of the Hotel"""
+  name: String!
+
+  """Description of the Hotel"""
+  description: String!
+
+  """Location of the Hotel"""
+  location: String!
+
+  """Address of the Hotel"""
+  address: String!
+
+  """Phone number of the Hotel"""
+  phone: String!
+
+  """Amenities provided by the Hotel"""
+  amenities: String!
+
+  """Images of the Hotel"""
+  images: String!
+
+  """Rooms available in the Hotel"""
+  rooms: [RoomDto!]!
+
+  """Reviews of the Hotel"""
+  reviews: [ReviewDto!]!
+
+  """The date when the Hotel was created"""
+  createdAt: DateTime!
+
+  """The date when the Hotel was last updated"""
+  updatedAt: DateTime!
+}
+
 type Query {
   hello: String!
   getUserProfile: User!
   getUsersForAdmins: [User!]!
+  getUserHotel: [Hotel!]!
 }
 
 type Mutation {

@@ -20,6 +20,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Hotel" (
     "id" SERIAL NOT NULL,
+    "authorId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "location" TEXT NOT NULL,
