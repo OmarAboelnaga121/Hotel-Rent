@@ -1,11 +1,11 @@
 import { ObjectType, Field, Int, InputType } from '@nestjs/graphql';
 import { IsInt, IsString } from 'class-validator';
 
-@InputType()
-export class RoomDto {
+@ObjectType()
+export class Room {
   @Field(() => Int, { description: 'Id of the Room' })
   @IsInt()
-  roomId: number;
+  id: number;
 
   @Field(() => String, { description: 'Name of the Room' })
   @IsString()

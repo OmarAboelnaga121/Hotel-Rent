@@ -7,6 +7,7 @@ import { UserDto } from 'src/user/dto/user.dto';
 import { GqlAuthGuard } from 'src/auth/user.gurd';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { HotelDto } from './dto/hotel.dto';
+import { createHotelDto } from './dto/createHotel.dto';
 
 
 @UseGuards(GqlAuthGuard)
@@ -24,11 +25,11 @@ export class HotelResolver {
     return hotels;
   }
 
-  // @Mutation(() => Hotel)
-  // async createHotel(
-  //   @UserProfile() user: UserDto,
-  //   @Args('hotelInput') hotel: HotelDto
-  // ): Promise<Hotel> {
-  //   return this.hotelService.createHotel(user, hotel);
-  // }
+  @Mutation(() => Hotel)
+  async createHotel(
+    @UserProfile() user: UserDto,
+    @Args('hotelInput', { type: () => createHotelDto }) hotel: createHotelDto
+  ): Promise<Hotel> {
+    return this.hotelService.createHotel(user, hotel);
+  }
 }

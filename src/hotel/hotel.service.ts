@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserDto } from 'src/user/dto/user.dto';
 import { HotelDto } from './dto/hotel.dto';
+import { createHotelDto } from './dto/createHotel.dto';
 
 @Injectable()
 export class HotelService {
@@ -23,7 +24,7 @@ export class HotelService {
     }
 
     // TODO: Create Hotel
-    async createHotel(user : UserDto, hotel : HotelDto){
+    async createHotel(user : UserDto, hotel : createHotelDto){
       // Check User Exist
       const checkUser = await this.primsaService.user.findUnique({
         where:{
@@ -35,20 +36,12 @@ export class HotelService {
         throw new BadRequestException('User not found')
       }
 
-      // Check Hotel Exist
-      const checkHotel = await this.primsaService.hotel.findUnique({
-        where:{
-          id : hotel.id
-        }
+      const checkHotel = await this.primsaService.hotel.findFirst({
+        where:{authorId: user.id}
       })
 
-      if(!checkHotel){
-        throw new BadRequestException('Hotel not found')
-      }
-
-      // Check User's Hotel
-      if(checkHotel.authorId === user.id){
-        throw new BadRequestException('User already have a hotel')
+      if(checkHotel){
+        throw new BadRequestException('Hotel already exist for this user')
       }
 
       // Create Hotel
@@ -60,8 +53,8 @@ export class HotelService {
           address : hotel.address,
           phone : hotel.phone,
           amenities : hotel.amenities,
-          images : hotel.images,
-          authorId : user.id
+          images : '',
+          authorId : user.id,
         }
       })
 

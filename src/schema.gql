@@ -62,22 +62,37 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type RoomDto {
+type Room {
+  """Id of the Room"""
+  id: Int!
+
+  """Name of the Room"""
   name: String!
-  capacity: Float!
+
+  """Description of the Room"""
+  description: String!
+
+  """Capacity of the Room"""
+  capacity: Int!
 }
 
-type ReviewDto {
+type Review {
+  """Id of the Review"""
   id: Int!
+
+  """Comment of the Review"""
   comment: String!
+
+  """Rating of the Review"""
   rating: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Hotel {
   """Id of the Hotel"""
   id: Int!
+
+  """Id of the Hotel"""
+  authorId: Int!
 
   """Name of the Hotel"""
   name: String!
@@ -101,10 +116,10 @@ type Hotel {
   images: String!
 
   """Rooms available in the Hotel"""
-  rooms: [RoomDto!]!
+  rooms: [Room!]
 
   """Reviews of the Hotel"""
-  reviews: [ReviewDto!]!
+  reviews: [Review!]
 
   """The date when the Hotel was created"""
   createdAt: DateTime!
@@ -124,6 +139,7 @@ type Mutation {
   register(userDto: RegisterDto!): Auth!
   login(loginDto: LoginDto!): Auth!
   updateUserProfile(updateUserInput: UpdateUserDto!): User!
+  createHotel(hotelInput: createHotelDto!): Hotel!
 }
 
 input RegisterDto {
@@ -166,4 +182,13 @@ input UpdateUserDto {
 
   """Email"""
   email: String
+}
+
+input createHotelDto {
+  name: String!
+  description: String!
+  location: String!
+  address: String!
+  phone: String!
+  amenities: String!
 }

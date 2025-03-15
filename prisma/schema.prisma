@@ -64,7 +64,7 @@ model Room {
   pricePerNight Int
   amenities     String
   images        String
-  isAvailable   Boolean
+  isAvailable   Boolean   @default(false)
   maxGuests     Int
   bookings      Booking[]
   createdAt     DateTime  @default(now())
